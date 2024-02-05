@@ -3,7 +3,7 @@
 <a href="https://currencyconverterlive.netlify.app"><img src="Currency_Converter.png"></a>
 
 <h1>Currency Converter </h1>
-<p>This is a currency converter using HTML, CSS and JavaScript. <br>To use this Corrency Converter <a href="https://currencyconverterlive.netlify.app">Click Here</a></p>
+<p>This is a currency converter using HTML, CSS and JavaScript. <br>To use this Currency Converter <a href="https://currencyconverterlive.netlify.app">Click Here</a></p>
 
 <h4> <span> · </span> <a href="https://github.com/arsalan-kazmi/Currency-Converter/blob/master/README.md"> Documentation </a> <span> · </span> <a href="https://github.com/arsalan-kazmi/Currency-Converter/issues"> Report Bug </a> <span> · </span> <a href="https://github.com/arsalan-kazmi/Currency-Converter/issues"> Request Feature </a> </h4>
 
