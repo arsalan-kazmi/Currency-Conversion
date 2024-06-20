@@ -1,61 +1,131 @@
 const BASE_URL =
-  "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/";
+  "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
 
-const dropDowns = document.querySelectorAll(".dropdown select");
-const button = document.querySelector("form button");
-const fromCurrency = document.querySelector(".from select");
-const toCurrency = document.querySelector(".to select");
+const dropdowns = document.querySelectorAll(".dropdown select");
+const btn = document.querySelector("form button");
+const fromCurr = document.querySelector(".from select");
+const toCurr = document.querySelector(".to select");
 const msg = document.querySelector(".msg");
 
-for (let select of dropDowns) {
-  for (currencyCode in countryList) {
+for (let select of dropdowns) {
+  for (currCode in countryList) {
     let newOption = document.createElement("option");
-    newOption.innerText = currencyCode;
-    newOption.value = currencyCode;
-
-    if (select.name === "from" && currencyCode === "USD") {
+    newOption.innerText = currCode;
+    newOption.value = currCode;
+    if (select.name === "from" && currCode === "USD") {
       newOption.selected = "selected";
-    } else if (select.name === "to" && currencyCode === "INR") {
+    } else if (select.name === "to" && currCode === "INR") {
       newOption.selected = "selected";
     }
     select.append(newOption);
   }
-
-  select.addEventListener("change", (e) => {
-    updateFlag(e.target);
+  select.addEventListener("change", evnt => {
+    updateFlag(evnt.target);
   });
 }
 
-const updateFlag = (element) => {
-  let currencyCode = element.value;
-  let countryCode = countryList[currencyCode];
+const updateFlag = element => {
+  let currCode = element.value;
+  let countryCode = countryList[currCode];
   let newSrc = `https://flagsapi.com/${countryCode}/flat/64.png`;
   let img = element.parentElement.querySelector("img");
   img.src = newSrc;
 };
 
-button.addEventListener("click", (evt) => {
-  evt.preventDefault();
-  updateExchangeRate();
-});
-
-window.addEventListener("load", () => {
-  updateExchangeRate();
-});
-
-const updateExchangeRate = async () => {
+btn.addEventListener("click", async evnt => {
+  evnt.preventDefault();
   let amount = document.querySelector(".amount input");
-  let amountValue = amount.value;
-  if (amountValue === "" || amountValue < 1) {
-    amount.value = 1;
-    amountValue = "1";
+  let amtVal = amount.value;
+  if (amtVal === "" || amtVal < 1) {
+    amtVal = 1;
+    amount.value = "1";
   }
 
-  const URL = `${BASE_URL}/${fromCurrency.value.toLowerCase()}/${toCurrency.value.toLowerCase()}.json`;
+  const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.json`;
   let response = await fetch(URL);
   let data = await response.json();
-  let rate = data[toCurrency.value.toLowerCase()];
 
-  let finalAmount = amountValue * rate;
-  msg.innerHTML = `${amountValue} ${fromCurrency.value} = ${finalAmount} ${toCurrency.value}`;
-};
+  let fromCurrency = fromCurr.value.toLowerCase();
+  let toCurrency = fromCurr.value.toLowerCase();
+
+  console.log(data.fromCurrency[toCurrency]);
+});
+
+btn.addEventListener("click", async evnt => {
+  evnt.preventDefault();
+  let amount = document.querySelector(".amount input");
+  let amtVal = amount.value;
+  if (amtVal === "" || amtVal < 1) {
+    amtVal = 1;
+    amount.value = "1";
+  }
+
+  const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.json`;
+
+  try {
+    let response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    let data = await response.json();
+
+    let fromCurrency = fromCurr.value.toLowerCase();
+    let toCurrency = toCurr.value.toLowerCase(); // Assuming you have toCurr element
+
+    if (data[fromCurrency] && data[fromCurrency][toCurrency]) {
+      rate = data[fromCurrency][toCurrency];
+      // console.log(data[fromCurrency][toCurrency]);
+    } else {
+      console.error("Currency data not found in the response");
+    }
+  } catch (error) {
+    console.error("Error fetching or processing data: ", error);
+  }
+
+  let finalAmount = amount * rate;
+  msg.innerText = `${amtVal} ${(fromCurr, value)} = ${finalAmount} ${
+    toCurr.value
+  }`;
+});
+
+btn.addEventListener("click", async evnt => {
+  evnt.preventDefault();
+  let amount = document.querySelector(".amount input");
+  let amtVal = amount.value;
+  if (amtVal === "" || amtVal < 1) {
+    amtVal = 1;
+    amount.value = "1";
+  }
+
+  const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.json`;
+
+  try {
+    let response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    let data = await response.json();
+
+    let fromCurrency = fromCurr.value.toLowerCase();
+    let toCurrency = toCurr.value.toLowerCase(); // Assuming you have toCurr element
+
+    /* console.log(fromCurrency,toCurrency)
+console.log(data[fromCurrency][toCurrency]) */
+
+    let rate;
+    if (data[fromCurrency] && data[fromCurrency][toCurrency]) {
+      rate = data[fromCurrency][toCurrency];
+      // console.log(rate);
+    } else {
+      console.error("Currency data not found in the response");
+      rate = 1; // Fallback rate to avoid further errors
+    }
+
+    let finalAmount = amtVal * rate; // Use amtVal here
+    msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount.toFixed(2)} ${
+      toCurr.value
+    }`;
+  } catch (error) {
+    console.error("Error fetching or processing data: ", error);
+  }
+});
